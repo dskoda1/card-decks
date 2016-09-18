@@ -1,7 +1,7 @@
 language: node_js
+env:
+- COVERALLS_REPO_TOKEN=GVbB3cj2SmobXpmbqqsvFsf2tF9oqZAxs
 node_js:
   - "6.6"
-after_success:
-  - coverallslanguage: node_js
-node_js:
-  - "6.6"
+after_script:
+  - npm coverall

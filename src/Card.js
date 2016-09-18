@@ -10,13 +10,15 @@ class Card {
     
     // CONSTRUCTORS
     constructor(init) {
-        if (Card.validateCombo(init)) {
-            this.suit = init.suit;
-            this.rank = init.rank;
+        try {
+            Card.validateCombo(init)
         }
-        else {
+        catch(err) {
             throw Error(Card.BAD_INIT);
         }
+        
+        this.suit = init.suit;
+        this.rank = init.rank;
     }
     
     // ACCESSORS

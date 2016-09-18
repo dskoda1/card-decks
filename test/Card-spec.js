@@ -60,4 +60,25 @@ describe('Card', () => {
         });
         
     });
+    
+    describe('getSuit()', () => {
+        it('Should return the correct suit', () => {
+            let obj = {
+                'suit': Card.SUITS.HEARTS,
+                'rank': Card.RANKS.TWO
+            };
+            let card = new Card(obj);
+            expect(card.getSuit()).to.equal(obj.suit);
+        });
+    });
+    describe('getRank()', () => {
+        it('Should return the correct rank', () => {
+            let obj = {
+                'suit': Card.SUITS.HEARTS,
+                'rank': Card.RANKS.TWO
+            };
+            let card = new Card(obj);
+            expect(card.getRank()).to.equal(obj.rank);
+        })
+    })
 });
