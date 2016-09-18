@@ -1,6 +1,6 @@
 {
   "name": "card-decks",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A module to simulate one to n decks of cards.",
   "main": "src/index.js",
   "scripts": {
@@ -12,6 +12,7 @@
     "decks"
   ],
   "author": "dskoda1",
+  "repository": "https://github.com/dskoda1/card-decks",
   "license": "MIT",
   "devDependencies": {
     "chai": "^3.5.0",
