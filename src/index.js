@@ -2,8 +2,9 @@
 
 module.exports = function () {
     let Card = require('./Card');
-    
+    let Deck = require('./Deck');
     return {
-        Card: Card,
+        Deck: Deck,
+        Card: Card
     };
 }();
