@@ -60,7 +60,7 @@ class Card {
     static get SUITS () {
         return g_SUITS;
     }
-    static get BAD_INIt() {
+    static get BAD_INIT() {
         return g_BAD_INIT;
     }
     static get BAD_COMBO() {
