@@ -1,4 +1,6 @@
 # Card-decks
+[![Build Status](https://travis-ci.org/dskoda1/card-decks.svg?branch=master)](https://travis-ci.org/dskoda1/card-decks)
+
 
 
 
