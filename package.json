@@ -1,10 +1,10 @@
 {
   "name": "card-decks",
-  "version": "0.0.3",
+  "version": "0.0.2",
   "description": "A module to simulate one to n decks of cards.",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha test/index.js"
+    "test": "mocha test/*.js"
   },
   "keywords": [
     "cards",
