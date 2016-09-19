@@ -83,9 +83,7 @@ describe('Deck', () => {
             
             it ('Will throw Deck.OUT_OF_CARDS when out of cards and defaulting to 1', () => {
                 let deck = new Deck();
-                for (let i = 0; i < 52; ++i) {
-                    deck.pullTop();
-                }
+                deck.pullTop(52);
                 expect(() => deck.pullTop()).to.throw(Deck.OUT_OF_CARDS);
             });
         });
@@ -114,6 +112,7 @@ describe('Deck', () => {
                 expect(cards.length).to.equal(5);
                 expect(deck.remainingSize()).to.equal(52 - 5);
                 expect(deck.pulledSize()).to.equal(5);
+                assert(_.isEqual(cards, deck.getPulled()));
             });
         });
     });
@@ -150,6 +149,78 @@ describe('Deck', () => {
             // Will be the same
             assert(_.isEqual(cards, deck.getRemaining()));
             
+        });
+    });
+    
+    describe('Deck.peekBottom()', () => {
+        it('Will return the card at the top of the deck without removing it', () => {
+            let deck = new Deck();
+            let activeCards = deck.getRemaining();
+            let bottomCard = activeCards[0];
+            expect(deck.peekBottom()).to.equal(bottomCard);
+        });
+        it('Will throw Deck.OUT_OF_CARDS if no more cards', () => {
+            let deck = new Deck();
+            deck.pullBottom(52);
+            expect(() => deck.peekBottom()).to.throw(Deck.OUT_OF_CARDS);
+        });
+    });
+    
+    describe('Deck.pullBottom(n)', () => {
+        describe('Validation of n', () => {
+            it('Will throw Deck.BAD_AMOUNT if less than one is passed', () => {
+                let deck = new Deck();
+                expect(() => deck.pullBottom(0)).to.throw(Deck.BAD_AMOUNT);
+                expect(() => deck.pullBottom(-1)).to.throw(Deck.BAD_AMOUNT);
+            });
+            it('Will throw Deck.OUT_OF_CARDS if more than remaining requested.', () => {
+                let deck = new Deck();
+                expect(() => deck.pullBottom(53)).to.throw(Deck.OUT_OF_CARDS);
+            });
+    
+            it('Will default to 1 if nothing is passed', () => {
+                let deck = new Deck();
+                let activeCards = deck.getRemaining();
+                let bottomCard = activeCards[0];
+                expect(deck.pullBottom()).to.equal(bottomCard);
+                expect(deck.remainingSize()).to.equal(52 - 1);
+                expect(deck.pulledSize()).to.equal(1);
+            });
+            
+            it ('Will throw Deck.OUT_OF_CARDS when out of cards and defaulting to 1', () => {
+                let deck = new Deck();
+                deck.pullBottom(52);
+                expect(() => deck.pullBottom()).to.throw(Deck.OUT_OF_CARDS);
+            });
+        });
+        describe('Return value', () => {
+            it ('Will return a Card type when 1 requested or defaulted', () => {
+                let deck = new Deck();
+                let card = deck.pullBottom();
+                assert.instanceOf(card, Card);
+                
+                card = deck.pullBottom(1);
+                assert.instanceOf(card, Card);
+            });
+            it ('Will return an array of Card types when more than 1 requested ', () => {
+                let deck = new Deck();
+                let cards = deck.pullBottom(5);
+                assert.instanceOf(cards, Array);
+                
+                _.forEach(cards, (card) => {
+                    assert.instanceOf(card, Card);
+                });
+            });
+            
+            
+            it('Will return n cards from the top of the deck, and remove them', () => {
+                let deck = new Deck();
+                let cards = deck.pullBottom(5);
+                expect(cards.length).to.equal(5);
+                expect(deck.remainingSize()).to.equal(52 - 5);
+                expect(deck.pulledSize()).to.equal(5);
+                assert(_.isEqual(cards, deck.getPulled()));
+            });
         });
     });
 });

@@ -95,6 +95,18 @@ class Deck {
         }
     }
     
+    // Return the bottom card without removing it.
+    // Throws Deck.OUT_OF_CARDS if no more cards remain
+    peekBottom() {
+        const remainingSize = this.remainingSize();
+        if (remainingSize > 0) {
+            return this.activeCards[0];
+        }
+        else {
+            throw Error(g_OUT_OF_CARDS);
+        }
+    }
+    
     // Return the top n cards and remove them. Default to 1 card
     // if not passed anything.
     // Throws Deck.BAD_AMOUNT if specified 'n' is less than 1.
@@ -131,6 +143,50 @@ class Deck {
             // Get the card
             let card = this.activeCards.pop();
             this.inactiveCards.push(card);
+            return card;
+        }
+    }
+    
+    // Return the bottom n cards and remove them. Default to 1 card
+    // if not passed anything.
+    // Throws Deck.BAD_AMOUNT if specified 'n' is less than 1.
+    // Throws Deck.OUT_OF_CARDS if specified 'n' more than remaining.
+    pullBottom(n) {
+        if (n !== undefined && n !== 1) {
+            // Make sure more than 0
+            if (n < 1) {
+                throw Error(g_BAD_AMOUNT);
+            }
+            // Make sure enough cards left
+            else if (n > this.remainingSize()) {
+                throw Error(g_OUT_OF_CARDS);
+            }
+            
+            
+            // Now get the cards
+            let cards = [];
+            for (let i = 0; i < n; ++i) {
+                // Pop a card from active
+                //TODO
+                let card = this.activeCards[i];
+                // Push it on inactive
+                this.inactiveCards.push(card);
+                // Push it on ret
+                cards.push(card);
+            }
+            this.activeCards = _.drop(this.activeCards, n);
+            return cards;
+        }
+        else {
+            // Make sure at least one card left
+            if (this.remainingSize() < 1) {
+                throw Error(g_OUT_OF_CARDS);
+            }
+            // Get the card
+            //TODO
+            let card = this.activeCards[0];
+            this.inactiveCards.push(card);
+            this.activeCards = _.drop(this.activeCards);
             return card;
         }
     }
