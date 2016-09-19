@@ -167,7 +167,6 @@ class Deck {
             let cards = [];
             for (let i = 0; i < n; ++i) {
                 // Pop a card from active
-                //TODO
                 let card = this.activeCards[i];
                 // Push it on inactive
                 this.inactiveCards.push(card);
@@ -183,10 +182,61 @@ class Deck {
                 throw Error(g_OUT_OF_CARDS);
             }
             // Get the card
-            //TODO
             let card = this.activeCards[0];
             this.inactiveCards.push(card);
             this.activeCards = _.drop(this.activeCards);
+            return card;
+        }
+    }
+    
+    // Return n random cards and remove them. Default to 1 card
+    // if not passed anything.
+    // Throws Deck.BAD_AMOUNT if specified 'n' is less than 1.
+    // Throws Deck.OUT_OF_CARDS if specified 'n' more than remaining.
+    pullRandom(n) {
+        if (n !== undefined && n !== 1) {
+            // Make sure more than 0
+            if (n < 1) {
+                throw Error(g_BAD_AMOUNT);
+            }
+            // Make sure enough cards left
+            else if (n > this.remainingSize()) {
+                throw Error(g_OUT_OF_CARDS);
+            }
+            
+            // get n unique random numbers
+            let randoms = [];
+            while (randoms.length < n) {
+                let random = _.random(0, this.remainingSize() - 1);
+                if (_.indexOf(randoms, random) === -1) {
+                    randoms.push(random);
+                }
+            }
+            
+            // Now get the cards
+            let cards = [];
+            for (let i = 0; i < n; ++i) {
+                // Pop a card from active
+                let random = randoms[i]
+                let card = this.activeCards[i];
+                // Push it on inactive
+                this.inactiveCards.push(card);
+                // Push it on ret
+                cards.push(card);
+                this.activeCards.splice(randoms[i] - i, 1);
+            }
+            return cards;
+        }
+        else {
+            // Make sure at least one card left
+            if (this.remainingSize() < 1) {
+                throw Error(g_OUT_OF_CARDS);
+            }
+            // Get the card
+            let random = _.random(0, this.remainingSize() - 1)
+            let card = this.activeCards[random];
+            this.inactiveCards.push(card);
+            this.activeCards.splice(random, 1);
             return card;
         }
     }

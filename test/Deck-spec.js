@@ -9,6 +9,8 @@ let Deck = require('../src').Deck;
 let Card = require('../src').Card;
 
 describe('Deck', () => {
+    
+//////////////////////////////////////////////////////////////////////////
     describe('Deck Constructor', () => {
         it ('Can take a numDecks argument, or default to 1', () => {
             
@@ -25,6 +27,7 @@ describe('Deck', () => {
     
     });
     
+//////////////////////////////////////////////////////////////////////////
     describe('Deck.has(combo)', () => {
        it ('Will throw Card.badCombo if argument is invalid', () => {
           let deck = new Deck();
@@ -46,6 +49,7 @@ describe('Deck', () => {
         });
     });
     
+//////////////////////////////////////////////////////////////////////////
     describe('Deck.peekTop()', () => {
         it('Will return the card at the top of the deck without removing it', () => {
             let deck = new Deck();
@@ -60,6 +64,7 @@ describe('Deck', () => {
         });
     });
     
+//////////////////////////////////////////////////////////////////////////
     describe('Deck.pullTop(n)', () => {
         describe('Validation of n', () => {
             it('Will throw Deck.BAD_AMOUNT if less than one is passed', () => {
@@ -117,41 +122,7 @@ describe('Deck', () => {
         });
     });
     
-    
-    describe('Deck.shuffle()', () => {
-        let original_shuffle;
-        before(() => {
-            // Cache the og shuffle
-            original_shuffle = _.shuffle;
-            // Set it to be reverse
-            _.shuffle = (a) => _.reverse(a); 
-            
-        });
-        
-        after(() => {
-            // Reset it
-            _.shuffle = original_shuffle;
-        });
-        it('Will shuffle all the cards in the deck', () => {
-            // We expect the cards to simply be reversed now
-            let deck = new Deck();
-            let cards = deck.getRemaining();
-            cards = _.map(cards, (card) => {
-                return new Card({
-                    'suit': card.getSuit(),
-                    'rank': card.getRank()
-                });
-            });
-            
-            deck.shuffle();
-            // Now reverse the original cards
-            cards = _.reverse(cards);
-            // Will be the same
-            assert(_.isEqual(cards, deck.getRemaining()));
-            
-        });
-    });
-    
+//////////////////////////////////////////////////////////////////////////
     describe('Deck.peekBottom()', () => {
         it('Will return the card at the top of the deck without removing it', () => {
             let deck = new Deck();
@@ -166,6 +137,7 @@ describe('Deck', () => {
         });
     });
     
+//////////////////////////////////////////////////////////////////////////
     describe('Deck.pullBottom(n)', () => {
         describe('Validation of n', () => {
             it('Will throw Deck.BAD_AMOUNT if less than one is passed', () => {
@@ -212,8 +184,7 @@ describe('Deck', () => {
                 });
             });
             
-            
-            it('Will return n cards from the top of the deck, and remove them', () => {
+            it('Will return n cards from the bottom of the deck, and remove them', () => {
                 let deck = new Deck();
                 let cards = deck.pullBottom(5);
                 expect(cards.length).to.equal(5);
@@ -223,5 +194,100 @@ describe('Deck', () => {
             });
         });
     });
+    
+//////////////////////////////////////////////////////////////////////////
+    describe('Deck.shuffle()', () => {
+        let original_shuffle;
+        before(() => {
+            // Cache the og shuffle
+            original_shuffle = _.shuffle;
+            // Set it to be reverse
+            _.shuffle = (a) => _.reverse(a); 
+            
+        });
+        
+        after(() => {
+            // Reset it
+            _.shuffle = original_shuffle;
+        });
+        it('Will shuffle all the cards in the deck', () => {
+            // We expect the cards to simply be reversed now
+            let deck = new Deck();
+            let cards = deck.getRemaining();
+            cards = _.map(cards, (card) => {
+                return new Card({
+                    'suit': card.getSuit(),
+                    'rank': card.getRank()
+                });
+            });
+            
+            deck.shuffle();
+            // Now reverse the original cards
+            cards = _.reverse(cards);
+            // Will be the same
+            assert(_.isEqual(cards, deck.getRemaining()));
+            
+        });
+    });
+    
+//////////////////////////////////////////////////////////////////////////    
+    describe('Deck.pullRandom()', () => {
+        describe('Validation of n', () => {
+            it('Will throw Deck.BAD_AMOUNT if less than one is passed', () => {
+                let deck = new Deck();
+                expect(() => deck.pullRandom(0)).to.throw(Deck.BAD_AMOUNT);
+                expect(() => deck.pullRandom(-1)).to.throw(Deck.BAD_AMOUNT);
+            });
+            it('Will throw Deck.OUT_OF_CARDS if more than remaining requested.', () => {
+                let deck = new Deck();
+                expect(() => deck.pullRandom(53)).to.throw(Deck.OUT_OF_CARDS);
+            });
+    
+            it('Will default to 1 if nothing is passed', () => {
+                let deck = new Deck();
+
+                // Can't do this check 
+                deck.pullRandom();
+                //let bottomCard = activeCards[0];
+                //expect(deck.pullRandom()).to.equal(bottomCard);
+                expect(deck.remainingSize()).to.equal(52 - 1);
+                expect(deck.pulledSize()).to.equal(1);
+            });
+            
+            it ('Will throw Deck.OUT_OF_CARDS when out of cards and defaulting to 1', () => {
+                let deck = new Deck();
+                deck.pullRandom(52);
+                expect(() => deck.pullRandom()).to.throw(Deck.OUT_OF_CARDS);
+            });
+        });
+        describe('Return value', () => {
+            it ('Will return a Card type when 1 requested or defaulted', () => {
+                let deck = new Deck();
+                let card = deck.pullRandom();
+                assert.instanceOf(card, Card);
+                
+                card = deck.pullRandom(1);
+                assert.instanceOf(card, Card);
+            });
+            it ('Will return an array of Card types when more than 1 requested ', () => {
+                let deck = new Deck();
+                let cards = deck.pullRandom(5);
+                assert.instanceOf(cards, Array);
+                
+                _.forEach(cards, (card) => {
+                    assert.instanceOf(card, Card);
+                });
+            });
+            
+            it('Will return n cards from the top of the deck, and remove them', () => {
+                let deck = new Deck();
+                let cards = deck.pullRandom(5);
+                expect(cards.length).to.equal(5);
+                expect(deck.remainingSize()).to.equal(52 - 5);
+                expect(deck.pulledSize()).to.equal(5);
+                assert(_.isEqual(cards, deck.getPulled()));
+            });
+        });
+    })
 });
 
