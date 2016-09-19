@@ -79,6 +79,6 @@ describe('Card', () => {
             };
             let card = new Card(obj);
             expect(card.getRank()).to.equal(obj.rank);
-        })
-    })
+        });
+    });
 });

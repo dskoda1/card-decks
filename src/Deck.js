@@ -138,7 +138,7 @@ class Deck {
     // Shuffle all the active cards, deferring to lodash shuffle
     // https://lodash.com/docs/4.15.0#shuffle
     shuffle() {
-        
+        this.activeCards = _.shuffle(this.activeCards);
     }
     
     // STATIC METHODS

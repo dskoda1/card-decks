@@ -11,7 +11,7 @@ class Card {
     // CONSTRUCTORS
     constructor(init) {
         try {
-            Card.validateCombo(init)
+            Card.validateCombo(init);
         }
         catch(err) {
             throw Error(Card.BAD_INIT);

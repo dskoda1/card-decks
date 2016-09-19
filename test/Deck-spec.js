@@ -120,7 +120,37 @@ describe('Deck', () => {
     
     
     describe('Deck.shuffle()', () => {
-        it('Will shuffle all the cards in the deck');
+        let original_shuffle;
+        before(() => {
+            // Cache the og shuffle
+            original_shuffle = _.shuffle;
+            // Set it to be reverse
+            _.shuffle = (a) => _.reverse(a); 
+            
+        });
+        
+        after(() => {
+            // Reset it
+            _.shuffle = original_shuffle;
+        });
+        it('Will shuffle all the cards in the deck', () => {
+            // We expect the cards to simply be reversed now
+            let deck = new Deck();
+            let cards = deck.getRemaining();
+            cards = _.map(cards, (card) => {
+                return new Card({
+                    'suit': card.getSuit(),
+                    'rank': card.getRank()
+                });
+            });
+            
+            deck.shuffle();
+            // Now reverse the original cards
+            cards = _.reverse(cards);
+            // Will be the same
+            assert(_.isEqual(cards, deck.getRemaining()));
+            
+        });
     });
 });
 
