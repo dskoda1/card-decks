@@ -217,13 +217,13 @@ class Deck {
             let cards = [];
             for (let i = 0; i < n; ++i) {
                 // Pop a card from active
-                let random = randoms[i]
-                let card = this.activeCards[i];
+                let random = randoms[i];
+                let card = this.activeCards[random - i];
                 // Push it on inactive
                 this.inactiveCards.push(card);
                 // Push it on ret
                 cards.push(card);
-                this.activeCards.splice(randoms[i] - i, 1);
+                this.activeCards.splice(random - i, 1);
             }
             return cards;
         }
@@ -233,7 +233,7 @@ class Deck {
                 throw Error(g_OUT_OF_CARDS);
             }
             // Get the card
-            let random = _.random(0, this.remainingSize() - 1)
+            let random = _.random(0, this.remainingSize() - 1);
             let card = this.activeCards[random];
             this.inactiveCards.push(card);
             this.activeCards.splice(random, 1);

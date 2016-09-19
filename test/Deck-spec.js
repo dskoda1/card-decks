@@ -95,11 +95,12 @@ describe('Deck', () => {
         describe('Return value', () => {
             it ('Will return a Card type when 1 requested or defaulted', () => {
                 let deck = new Deck();
-                let card = deck.pullTop();
-                assert.instanceOf(card, Card);
                 
-                card = deck.pullTop(1);
-                assert.instanceOf(card, Card);
+                for (let i = 0; i < 52; ++i) {
+                    let card = deck.pullTop();
+                    assert.instanceOf(card, Card);
+                }
+                
             });
             it ('Will return an array of Card types when more than 1 requested ', () => {
                 let deck = new Deck();
@@ -118,6 +119,10 @@ describe('Deck', () => {
                 expect(deck.remainingSize()).to.equal(52 - 5);
                 expect(deck.pulledSize()).to.equal(5);
                 assert(_.isEqual(cards, deck.getPulled()));
+                
+                for (let i = 0; i < 5; ++i) {
+                    assert.instanceOf(cards[i], Card);
+                }
             });
         });
     });
@@ -168,11 +173,12 @@ describe('Deck', () => {
         describe('Return value', () => {
             it ('Will return a Card type when 1 requested or defaulted', () => {
                 let deck = new Deck();
-                let card = deck.pullBottom();
-                assert.instanceOf(card, Card);
                 
-                card = deck.pullBottom(1);
-                assert.instanceOf(card, Card);
+                
+                for (let i = 0; i < 52; ++i) {
+                    let card = deck.pullBottom();
+                    assert.instanceOf(card, Card);
+                }
             });
             it ('Will return an array of Card types when more than 1 requested ', () => {
                 let deck = new Deck();
@@ -191,6 +197,10 @@ describe('Deck', () => {
                 expect(deck.remainingSize()).to.equal(52 - 5);
                 expect(deck.pulledSize()).to.equal(5);
                 assert(_.isEqual(cards, deck.getPulled()));
+                
+                for (let i = 0; i < 5; ++i) {
+                    assert.instanceOf(cards[i], Card);
+                }
             });
         });
     });
@@ -247,11 +257,16 @@ describe('Deck', () => {
                 let deck = new Deck();
 
                 // Can't do this check 
-                deck.pullRandom();
-                //let bottomCard = activeCards[0];
-                //expect(deck.pullRandom()).to.equal(bottomCard);
-                expect(deck.remainingSize()).to.equal(52 - 1);
-                expect(deck.pulledSize()).to.equal(1);
+                let card = deck.pullRandom();
+                assert.instanceOf(card, Card);
+
+                for (let i = 0; i < 51; ++i) {
+                    card = deck.pullRandom(1);
+                    assert.instanceOf(card, Card);
+
+                }
+                expect(deck.remainingSize()).to.equal(0);
+                expect(deck.pulledSize()).to.equal(52);
             });
             
             it ('Will throw Deck.OUT_OF_CARDS when out of cards and defaulting to 1', () => {
@@ -263,14 +278,19 @@ describe('Deck', () => {
         describe('Return value', () => {
             it ('Will return a Card type when 1 requested or defaulted', () => {
                 let deck = new Deck();
-                let card = deck.pullRandom();
-                assert.instanceOf(card, Card);
                 
-                card = deck.pullRandom(1);
-                assert.instanceOf(card, Card);
+               
+                for (let i = 0; i < 52; ++i) {
+                    let card = deck.pullRandom();
+                    assert.instanceOf(card, Card);
+                }
+                
             });
             it ('Will return an array of Card types when more than 1 requested ', () => {
                 let deck = new Deck();
+                
+                
+                
                 let cards = deck.pullRandom(5);
                 assert.instanceOf(cards, Array);
                 
@@ -286,6 +306,10 @@ describe('Deck', () => {
                 expect(deck.remainingSize()).to.equal(52 - 5);
                 expect(deck.pulledSize()).to.equal(5);
                 assert(_.isEqual(cards, deck.getPulled()));
+                
+                for (let i = 0; i < 5; ++i) {
+                    assert.instanceOf(cards[i], Card);
+                }
             });
         });
     })
