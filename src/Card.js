@@ -30,16 +30,6 @@ class Card {
         return this.rank;
     }
     
-    equals(card) {
-        if (card instanceof Card) {
-            return  this.getSuit() === card.getSuit() && 
-                    this.getRank() === card.getRank();
-        }
-        else {
-            return false;
-        }
-    }
-    
     // STATIC CLASS MEMBERS
     static validateCombo(combo) {
         if (combo 
