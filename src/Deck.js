@@ -4,7 +4,6 @@ let _ = require('lodash');
 let Card = require('./Card');
 
 
-
 class Deck {
     // This class provides an interface for creating and accessing
     // playing cards in a deck. It can be used to simulate one to
@@ -112,39 +111,7 @@ class Deck {
     // Throws Deck.BAD_AMOUNT if specified 'n' is less than 1.
     // Throws Deck.OUT_OF_CARDS if specified 'n' more than remaining.
     pullTop(n) {
-        if (n !== undefined && n !== 1) {
-            // Make sure more than 0
-            if (n < 1) {
-                throw Error(g_BAD_AMOUNT);
-            }
-            // Make sure enough cards left
-            else if (n > this.remainingSize()) {
-                throw Error(g_OUT_OF_CARDS);
-            }
-            
-            
-            // Now get the cards
-            let cards = [];
-            for (let i = 0; i < n; ++i) {
-                // Pop a card from active
-                let card = this.activeCards.pop();
-                // Push it on inactive
-                this.inactiveCards.push(card);
-                // Push it on ret
-                cards.push(card);
-            }
-            return cards;
-        }
-        else {
-            // Make sure at least one card left
-            if (this.remainingSize() < 1) {
-                throw Error(g_OUT_OF_CARDS);
-            }
-            // Get the card
-            let card = this.activeCards.pop();
-            this.inactiveCards.push(card);
-            return card;
-        }
+        return this._pull(Array.prototype.pop, n);
     }
     
     // Return the bottom n cards and remove them. Default to 1 card
@@ -152,42 +119,43 @@ class Deck {
     // Throws Deck.BAD_AMOUNT if specified 'n' is less than 1.
     // Throws Deck.OUT_OF_CARDS if specified 'n' more than remaining.
     pullBottom(n) {
-        if (n !== undefined && n !== 1) {
-            // Make sure more than 0
-            if (n < 1) {
-                throw Error(g_BAD_AMOUNT);
-            }
-            // Make sure enough cards left
-            else if (n > this.remainingSize()) {
-                throw Error(g_OUT_OF_CARDS);
-            }
+        return this._pull(Array.prototype.shift, n);
+    }
+    
+    _pull(arrMethod, n) {
+        if (n === undefined) {
+            n = 1;
+        }
+        
+        if (n < 1) {
+            throw Error(g_BAD_AMOUNT);
+        }
+        if (n > this.remainingSize()) {
+            throw Error(g_OUT_OF_CARDS);
+        }
+        
+        if (typeof arrMethod !== 'function') {
+            throw Error('Programmer error- only calling this method internally');
+        }
             
-            
-            // Now get the cards
-            let cards = [];
-            for (let i = 0; i < n; ++i) {
-                // Pop a card from active
-                let card = this.activeCards[i];
-                // Push it on inactive
-                this.inactiveCards.push(card);
-                // Push it on ret
-                cards.push(card);
-            }
-            this.activeCards = _.drop(this.activeCards, n);
-            return cards;
+        // Now get the cards
+        let cards = [];
+        for (let i = 0; i < n; ++i) {
+            // retrieve a card from active
+            let card = arrMethod.call(this.activeCards);
+            // Push it on inactive
+            this.inactiveCards.push(card);
+            // Push it on ret
+            cards.push(card);
+        }
+        if (cards.length === 1) {
+            return cards[0];
         }
         else {
-            // Make sure at least one card left
-            if (this.remainingSize() < 1) {
-                throw Error(g_OUT_OF_CARDS);
-            }
-            // Get the card
-            let card = this.activeCards[0];
-            this.inactiveCards.push(card);
-            this.activeCards = _.drop(this.activeCards);
-            return card;
+            return cards;
         }
     }
+    
     
     // Return n random cards and remove them. Default to 1 card
     // if not passed anything.
@@ -240,7 +208,7 @@ class Deck {
             return card;
         }
     }
-   
+    
     // Shuffle all the active cards, deferring to lodash shuffle
     // https://lodash.com/docs/4.15.0#shuffle
     shuffle() {
