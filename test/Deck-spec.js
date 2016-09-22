@@ -230,6 +230,87 @@ describe('Deck', () => {
         });
     });
     
+//////////////////////////////////////////////////////////////////////////    
+    describe('Deck.pullRandom()', () => {
+        //let original_random;
+        before(() => {
+            // Cache the og shuffle
+            //original_random = _.random;
+            // Set it to be reverse
+            // TODO:
+            // Fix the ranodm behavior, this is locking
+            // up in the while loop
+            //_.random = (low, high) => 0; 
+            
+        });
+        
+        after(() => {
+            // Reset it
+            //_.shuffle = original_random();
+        });
+        
+        describe('Validation of n', () => {
+            it('Will throw Deck.BAD_AMOUNT if less than one is passed', () => {
+                let deck = new Deck();
+                expect(() => deck.pullRandom(0)).to.throw(Deck.BAD_AMOUNT);
+                expect(() => deck.pullRandom(-1)).to.throw(Deck.BAD_AMOUNT);
+            });
+            it('Will throw Deck.OUT_OF_CARDS if more than remaining requested.', () => {
+                let deck = new Deck();
+                expect(() => deck.pullRandom(53)).to.throw(Deck.OUT_OF_CARDS);
+            });
+            it('Will default to 1 if nothing is passed', () => {
+                let deck = new Deck();
+                for (let i = 0; i < 52; ++i) {
+                    let card = deck.pullRandom(1);
+                    assert.instanceOf(card, Card);
+
+                }
+                expect(deck.remainingSize()).to.equal(0);
+                expect(deck.pulledSize()).to.equal(52);
+            });
+            it ('Will throw Deck.OUT_OF_CARDS when out of cards and defaulting to 1', () => {
+                let deck = new Deck();
+                deck.pullRandom(52);
+                expect(() => deck.pullRandom()).to.throw(Deck.OUT_OF_CARDS);
+            });
+        });
+        describe('Return value', () => {
+            it('Will return n cards from the randomly in the deck, and remove them', () => {
+                let deck = new Deck();
+                let cards = deck.pullRandom(5);
+                expect(cards.length).to.equal(5);
+                expect(deck.remainingSize()).to.equal(52 - 5);
+                expect(deck.pulledSize()).to.equal(5);
+                assert(_.isEqual(cards, deck.getPulled()));
+                
+                _.forEach(cards, (card) => {
+                    assert.instanceOf(card, Card);
+                });
+            });
+            it ('Will return a single Card type when defaulting or 1 requested', () => {
+                let deck = new Deck();
+                const halfDeck = deck.remainingSize() / 2;
+                for (let i = 0; i < halfDeck; ++i) {
+                    let card = deck.pullRandom();
+                    assert.instanceOf(card, Card);
+                }
+                for (let i = 0; i < halfDeck; ++i) {
+                    let card = deck.pullRandom(1);
+                    assert.instanceOf(card, Card);
+                }
+            });
+            it ('Will return an array of Card types when more than 1 requested ', () => {
+                let deck = new Deck();
+                let cards = deck.pullRandom(5);
+                assert.instanceOf(cards, Array);
+                
+                _.forEach(cards, (card) => {
+                    assert.instanceOf(card, Card);
+                });
+            });
+        });
+    })
 //////////////////////////////////////////////////////////////////////////
     describe('Deck.shuffle()', () => {
         let original_shuffle;
@@ -265,90 +346,5 @@ describe('Deck', () => {
         });
     });
     
-//////////////////////////////////////////////////////////////////////////    
-    describe.skip('Deck.pullRandom()', () => {
-        let original_random;
-        before(() => {
-            // Cache the og shuffle
-            original_random = _.random;
-            // Set it to be reverse
-            // TODO:
-            // Fix the ranodm behavior, this is locking
-            // up in the while loop
-            _.random = (low, high) => 0; 
-            
-        });
-        
-        after(() => {
-            // Reset it
-            _.shuffle = original_random();
-        });
-        
-        
-        describe('Validation of n', () => {
-            it('Will throw Deck.BAD_AMOUNT if less than one is passed', () => {
-                let deck = new Deck();
-                expect(() => deck.pullRandom(0)).to.throw(Deck.BAD_AMOUNT);
-                expect(() => deck.pullRandom(-1)).to.throw(Deck.BAD_AMOUNT);
-            });
-            it('Will throw Deck.OUT_OF_CARDS if more than remaining requested.', () => {
-                let deck = new Deck();
-                expect(() => deck.pullRandom(53)).to.throw(Deck.OUT_OF_CARDS);
-            });
-    
-            it('Will default to 1 if nothing is passed', () => {
-                let deck = new Deck();
-
-
-                for (let i = 0; i < 52; ++i) {
-                    let card = deck.pullRandom(1);
-                    assert.instanceOf(card, Card);
-
-                }
-                expect(deck.remainingSize()).to.equal(0);
-                expect(deck.pulledSize()).to.equal(52);
-            });
-            
-            it ('Will throw Deck.OUT_OF_CARDS when out of cards and defaulting to 1', () => {
-                let deck = new Deck();
-                deck.pullRandom(52);
-                expect(() => deck.pullRandom()).to.throw(Deck.OUT_OF_CARDS);
-            });
-        });
-        describe('Return value', () => {
-            it ('Will return a Card type when 1 requested or defaulted', () => {
-                let deck = new Deck();
-                
-               
-                for (let i = 0; i < 52; ++i) {
-                    let card = deck.pullRandom();
-                    assert.instanceOf(card, Card);
-                }
-                
-            });
-            it ('Will return an array of Card types when more than 1 requested ', () => {
-                let deck = new Deck();
-                let cards = deck.pullRandom(5);
-                assert.instanceOf(cards, Array);
-                
-                _.forEach(cards, (card) => {
-                    assert.instanceOf(card, Card);
-                });
-            });
-            
-            it('Will return n cards from the top of the deck, and remove them', () => {
-                let deck = new Deck();
-                let cards = deck.pullRandom(5);
-                expect(cards.length).to.equal(5);
-                expect(deck.remainingSize()).to.equal(52 - 5);
-                expect(deck.pulledSize()).to.equal(5);
-                assert(_.isEqual(cards, deck.getPulled()));
-                
-                _.forEach(cards, (card) => {
-                    assert.instanceOf(card, Card);
-                });
-            });
-        });
-    })
 });
 

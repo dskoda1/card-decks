@@ -4,6 +4,13 @@ let _ = require('lodash');
 let Card = require('./Card');
 
 
+Array.prototype.removeRandom = function() {
+    // Pick random element
+    let random = _.random(0, this.length - 1);
+    // Splice returns array, only splicing 1 so return first and only ele
+    return this.splice(random, 1)[0];
+};
+
 class Deck {
     // This class provides an interface for creating and accessing
     // playing cards in a deck. It can be used to simulate one to
@@ -122,6 +129,15 @@ class Deck {
         return this._pull(Array.prototype.shift, n);
     }
     
+    // Return n random cards and remove them. Default to 1 card
+    // if not passed anything.
+    // Throws Deck.BAD_AMOUNT if specified 'n' is less than 1.
+    // Throws Deck.OUT_OF_CARDS if specified 'n' more than remaining.
+    pullRandom(n) {
+        return this._pull(Array.prototype.removeRandom, n);
+    }
+    
+    
     _pull(arrMethod, n) {
         if (n === undefined) {
             n = 1;
@@ -156,58 +172,6 @@ class Deck {
         }
     }
     
-    
-    // Return n random cards and remove them. Default to 1 card
-    // if not passed anything.
-    // Throws Deck.BAD_AMOUNT if specified 'n' is less than 1.
-    // Throws Deck.OUT_OF_CARDS if specified 'n' more than remaining.
-    pullRandom(n) {
-        if (n !== undefined && n !== 1) {
-            // Make sure more than 0
-            if (n < 1) {
-                throw Error(g_BAD_AMOUNT);
-            }
-            // Make sure enough cards left
-            else if (n > this.remainingSize()) {
-                throw Error(g_OUT_OF_CARDS);
-            }
-            
-            // get n unique random numbers
-            let randoms = [];
-            while (randoms.length < n) {
-                let random = _.random(0, this.remainingSize() - 1);
-                if (_.indexOf(randoms, random) === -1) {
-                    randoms.push(random);
-                }
-            }
-            
-            // Now get the cards
-            let cards = [];
-            for (let i = 0; i < n; ++i) {
-                // Pop a card from active
-                let random = randoms[i];
-                let card = this.activeCards[random - i];
-                // Push it on inactive
-                this.inactiveCards.push(card);
-                // Push it on ret
-                cards.push(card);
-                this.activeCards.splice(random - i, 1);
-            }
-            return cards;
-        }
-        else {
-            // Make sure at least one card left
-            if (this.remainingSize() < 1) {
-                throw Error(g_OUT_OF_CARDS);
-            }
-            // Get the card
-            let random = _.random(0, this.remainingSize() - 1);
-            let card = this.activeCards[random];
-            this.inactiveCards.push(card);
-            this.activeCards.splice(random, 1);
-            return card;
-        }
-    }
     
     // Shuffle all the active cards, deferring to lodash shuffle
     // https://lodash.com/docs/4.15.0#shuffle
