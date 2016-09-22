@@ -137,7 +137,8 @@ class Deck {
         return this._pull(Array.prototype.removeRandom, n);
     }
     
-    
+    // Internal method: called with an Array.prototype method,
+    // and a number of cards to remove.
     _pull(arrMethod, n) {
         if (n === undefined) {
             n = 1;

@@ -311,6 +311,12 @@ describe('Deck', () => {
             });
         });
     })
+    describe('Deck._pull()', () => {
+        it('Will fail if called without a function for the first argument', () => {
+            let deck = new Deck();
+            expect(() => {deck._pull()}).to.throw();
+        })
+    })
 //////////////////////////////////////////////////////////////////////////
     describe('Deck.shuffle()', () => {
         let original_shuffle;
