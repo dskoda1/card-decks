@@ -15,13 +15,13 @@ describe('Deck', () => {
         it ('Can take a numDecks argument, or default to 1', () => {
             
             let oneDeck = new Deck();
-            expect(oneDeck.totalSize()).to.equal(52);
+            expect(oneDeck.totalSize()).to.equal(Deck.CardsPerDeck);
             expect(oneDeck.decks()).to.equal(1);
             
             let fiveDecks = new Deck({
                 'numDecks': 5
             });
-            expect(fiveDecks.totalSize()).to.equal(52 * 5);
+            expect(fiveDecks.totalSize()).to.equal(Deck.CardsPerDeck * 5);
             expect(fiveDecks.decks()).to.equal(5);
         });
     
@@ -50,8 +50,8 @@ describe('Deck', () => {
     });
     
 //////////////////////////////////////////////////////////////////////////
-    describe('Deck.peekTop()', () => {
-        it('Will return the card at the top of the deck without removing it', () => {
+    describe('Deck.peekTop(n)', () => {
+        it('Will return the top n cards of the deck without removing it', () => {
             let deck = new Deck();
             let activeCards = deck.getRemaining();
             let topCard = activeCards[deck.remainingSize() - 1];
@@ -59,7 +59,7 @@ describe('Deck', () => {
         });
         it('Will throw Deck.OUT_OF_CARDS if no more cards', () => {
             let deck = new Deck();
-            deck.pullTop(52);
+            deck.pullTop(Deck.CardsPerDeck);
             expect(() => deck.peekTop()).to.throw(Deck.OUT_OF_CARDS);
         });
     });
@@ -82,13 +82,13 @@ describe('Deck', () => {
                 let activeCards = deck.getRemaining();
                 let topCard = activeCards[deck.remainingSize() - 1];
                 expect(deck.pullTop()).to.equal(topCard);
-                expect(deck.remainingSize()).to.equal(52 - 1);
+                expect(deck.remainingSize()).to.equal(Deck.CardsPerDeck - 1);
                 expect(deck.pulledSize()).to.equal(1);
             });
             
             it ('Will throw Deck.OUT_OF_CARDS when out of cards and defaulting to 1', () => {
                 let deck = new Deck();
-                deck.pullTop(52);
+                deck.pullTop(Deck.CardsPerDeck);
                 expect(() => deck.pullTop()).to.throw(Deck.OUT_OF_CARDS);
             });
         });
@@ -106,12 +106,12 @@ describe('Deck', () => {
                 
                 // Check lengths are accurate
                 expect(cards.length).to.equal(numCards);
-                expect(deck.remainingSize()).to.equal(52 - numCards);
+                expect(deck.remainingSize()).to.equal(Deck.CardsPerDeck - numCards);
                 expect(deck.pulledSize()).to.equal(numCards);
                 
                 // Check equality now
-                assert(_.isEqual(topCards, cards))
-                assert(_.isEqual(topCards, deck.getPulled()))
+                assert(_.isEqual(topCards, cards));
+                assert(_.isEqual(topCards, deck.getPulled()));
                 assert(_.isEqual(cards, deck.getPulled()));
                 
             });
@@ -150,7 +150,7 @@ describe('Deck', () => {
         });
         it('Will throw Deck.OUT_OF_CARDS if no more cards', () => {
             let deck = new Deck();
-            deck.pullBottom(52);
+            deck.pullBottom(Deck.CardsPerDeck);
             expect(() => deck.peekBottom()).to.throw(Deck.OUT_OF_CARDS);
         });
     });
@@ -172,13 +172,13 @@ describe('Deck', () => {
                 let deck = new Deck();
                 let bottomCard = deck.getRemaining()[0];
                 expect(deck.pullBottom()).to.equal(bottomCard);
-                expect(deck.remainingSize()).to.equal(52 - 1);
+                expect(deck.remainingSize()).to.equal(Deck.CardsPerDeck - 1);
                 expect(deck.pulledSize()).to.equal(1);
             });
             
             it ('Will throw Deck.OUT_OF_CARDS when out of cards and defaulting to 1', () => {
                 let deck = new Deck();
-                deck.pullBottom(52);
+                deck.pullBottom(Deck.CardsPerDeck);
                 expect(() => deck.pullBottom()).to.throw(Deck.OUT_OF_CARDS);
             });
         });
@@ -196,12 +196,12 @@ describe('Deck', () => {
                 
                 // Check lengths are accurate
                 expect(cards.length).to.equal(numCards);
-                expect(deck.remainingSize()).to.equal(52 - numCards);
+                expect(deck.remainingSize()).to.equal(Deck.CardsPerDeck - numCards);
                 expect(deck.pulledSize()).to.equal(numCards);
                 
                 // Check equality now
-                assert(_.isEqual(bottomCards, cards))
-                assert(_.isEqual(bottomCards, deck.getPulled()))
+                assert(_.isEqual(bottomCards, cards));
+                assert(_.isEqual(bottomCards, deck.getPulled()));
                 assert(_.isEqual(cards, deck.getPulled()));
                 
             });
@@ -261,17 +261,17 @@ describe('Deck', () => {
             });
             it('Will default to 1 if nothing is passed', () => {
                 let deck = new Deck();
-                for (let i = 0; i < 52; ++i) {
+                for (let i = 0; i < Deck.CardsPerDeck; ++i) {
                     let card = deck.pullRandom(1);
                     assert.instanceOf(card, Card);
 
                 }
                 expect(deck.remainingSize()).to.equal(0);
-                expect(deck.pulledSize()).to.equal(52);
+                expect(deck.pulledSize()).to.equal(Deck.CardsPerDeck);
             });
             it ('Will throw Deck.OUT_OF_CARDS when out of cards and defaulting to 1', () => {
                 let deck = new Deck();
-                deck.pullRandom(52);
+                deck.pullRandom(Deck.CardsPerDeck);
                 expect(() => deck.pullRandom()).to.throw(Deck.OUT_OF_CARDS);
             });
         });
@@ -280,7 +280,7 @@ describe('Deck', () => {
                 let deck = new Deck();
                 let cards = deck.pullRandom(5);
                 expect(cards.length).to.equal(5);
-                expect(deck.remainingSize()).to.equal(52 - 5);
+                expect(deck.remainingSize()).to.equal(Deck.CardsPerDeck - 5);
                 expect(deck.pulledSize()).to.equal(5);
                 assert(_.isEqual(cards, deck.getPulled()));
                 
@@ -310,13 +310,13 @@ describe('Deck', () => {
                 });
             });
         });
-    })
+    });
     describe('Deck._pull()', () => {
         it('Will fail if called without a function for the first argument', () => {
             let deck = new Deck();
-            expect(() => {deck._pull()}).to.throw();
-        })
-    })
+            expect(() => deck._pull() ).to.throw();
+        });
+    });
 //////////////////////////////////////////////////////////////////////////
     describe('Deck.shuffle()', () => {
         let original_shuffle;
@@ -351,6 +351,54 @@ describe('Deck', () => {
             
         });
     });
-    
+//////////////////////////////////////////////////////////////////////////
+    describe('Deck.replaceTop(n)', () => {
+        describe('Not passed any cards, default to replacing with pulled pile', () => {
+            it('Will throw Deck.TAMPERED_WITH if one of the piles was tampered with and size is not what it should', () => {
+                let oneDeck = new Deck();
+                oneDeck.pullBottom(26);
+                // Doesn't matter what we pushed, just to show tampering with
+                oneDeck.activeCards.push(3);
+                expect(() => oneDeck.replaceTop()).to.throw(Deck.TAMPERED_WITH);
+                
+                let fiveDeck = new Deck({'numDecks': 5});
+                fiveDeck.pullTop(140);
+                fiveDeck.inactiveCards.pop();
+                expect(() => fiveDeck.replaceTop()).to.throw(Deck.TAMPERED_WITH);
+            });
+
+            it('Will put all cards in the pulled pile back on top in the order they were pulled', () => {
+                let deck = new Deck();
+                //deck.shuffle()
+                const pullAmount = 10;
+                let cards = deck.pullTop(pullAmount);
+                
+                // Verify sizes
+                expect(deck.pulledSize()).to.equal(pullAmount);
+                expect(deck.remainingSize()).to.equal(Deck.CardsPerDeck - pullAmount);
+                
+                deck.replaceTop();
+                
+                // Verify sizes
+                expect(deck.pulledSize()).to.equal(0);
+                expect(deck.remainingSize()).to.equal(Deck.CardsPerDeck);
+                
+                assert(_.isEqual(deck.getPulled(), []));
+                
+                // Verfiy cards placed in correct order
+                for (let i = 1; i <= pullAmount; ++i) {
+                    //expect(deck.getRemaining()[Deck.CardsPerDeck - pullAmount + i])
+                    //    .to.equal(cards[i - 1]);
+                }
+                //Deck.CardsPerDeck - (pullAmount - i)
+                
+            });
+        });
+    });    
 });
+
+
+
+
+
 

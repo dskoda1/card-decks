@@ -25,6 +25,7 @@ class Deck {
             this.numDecks = 1;
         }
         
+        
         // Create the deck now
         this.createDeck();
     }
@@ -78,7 +79,7 @@ class Deck {
     //////////////////////////////////////////////////////////////////////
     
     //////////////////////////////////////////////////////////////////////
-    // Return the number of occurences of this card in this deck
+    // Return the number of occurences of this card left in the active pile
     has(combo) {
         // Will throw Card.badCombo if invalid combo
         Card.validateCombo(combo);
@@ -89,6 +90,7 @@ class Deck {
         })
         .length;
     }
+    
     // Return the top card without removing it.
     // Throws Deck.OUT_OF_CARDS if no more cards remain
     peekTop() {
@@ -180,6 +182,29 @@ class Deck {
         this.activeCards = _.shuffle(this.activeCards);
     }
     
+    
+    replaceTop(cards) {
+        this._replace(Array.prototype.push, cards);
+    }
+    
+    _replace(arrMethod, cards) {
+        
+        if (cards == undefined || cards == null) {
+            // Make sure pulled + remaining == to 
+            if (this.pulledSize() + this.remainingSize() != this.numDecks * Deck.CardsPerDeck) {
+                throw Error(g_TAMPERED_WITH);
+            }
+
+            for (let i = 0; i < this.pulledSize(); ++i) {
+                arrMethod.call(this.activeCards, this.inactiveCards[0]);
+            }            
+            this.inactiveCards = [];
+            
+            
+        }
+        
+    }
+    
     // STATIC METHODS
     static get BAD_AMOUNT() {
         return g_BAD_AMOUNT;
@@ -189,18 +214,31 @@ class Deck {
         return g_OUT_OF_CARDS;
     }
     
+    static get TAMPERED_WITH() {
+        return g_TAMPERED_WITH;
+    }
     
+    static get CardsPerDeck() {
+        return g_CardsPerDeck;
+    }
 }
 
 module.exports = Deck;
 
-let g_BAD_AMOUNT = {
+const g_BAD_AMOUNT = {
     type: 'BAD_AMOUNT',
     error: 'Invalid amount of cards requested. Must be at least 1.'
 };
 
-let g_OUT_OF_CARDS = {
+const g_OUT_OF_CARDS = {
     type: 'OUT_OF_CARDS',
     error: 'No more cards are available to pull. Replace cards to continue.'
 };
+
+const g_TAMPERED_WITH = {
+    type: 'OUT_OF_CARDS',
+    error: 'No more cards are available to pull. Replace cards to continue.'
+};
+
+const g_CardsPerDeck = 52;
 
