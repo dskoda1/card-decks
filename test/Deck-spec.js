@@ -356,12 +356,14 @@ describe('Deck', () => {
         describe('Not passed any cards, default to replacing with pulled pile', () => {
             it('Will throw Deck.TAMPERED_WITH if one of the piles was tampered with and size is not what it should', () => {
                 let oneDeck = new Deck();
+                oneDeck.shuffle();
                 oneDeck.pullBottom(26);
                 // Doesn't matter what we pushed, just to show tampering with
                 oneDeck.activeCards.push(3);
                 expect(() => oneDeck.replaceTop()).to.throw(Deck.TAMPERED_WITH);
                 
                 let fiveDeck = new Deck({'numDecks': 5});
+                fiveDeck.shuffle();
                 fiveDeck.pullTop(140);
                 fiveDeck.inactiveCards.pop();
                 expect(() => fiveDeck.replaceTop()).to.throw(Deck.TAMPERED_WITH);
@@ -369,14 +371,21 @@ describe('Deck', () => {
 
             it('Will put all cards in the pulled pile back on top in the order they were pulled', () => {
                 let deck = new Deck();
-                //deck.shuffle()
+                deck.shuffle();
                 const pullAmount = 10;
                 let cards = deck.pullTop(pullAmount);
+                let pulledCards = _.map(cards, (card) => {
+                    return new Card({
+                        'suit': card.getSuit(),
+                        'rank': card.getRank()
+                    });
+                }); 
                 
                 // Verify sizes
                 expect(deck.pulledSize()).to.equal(pullAmount);
                 expect(deck.remainingSize()).to.equal(Deck.CardsPerDeck - pullAmount);
                 
+                // Do the operation now
                 deck.replaceTop();
                 
                 // Verify sizes
@@ -384,15 +393,28 @@ describe('Deck', () => {
                 expect(deck.remainingSize()).to.equal(Deck.CardsPerDeck);
                 
                 assert(_.isEqual(deck.getPulled(), []));
-                
-                // Verfiy cards placed in correct order
-                for (let i = 1; i <= pullAmount; ++i) {
-                    //expect(deck.getRemaining()[Deck.CardsPerDeck - pullAmount + i])
-                    //    .to.equal(cards[i - 1]);
-                }
-                //Deck.CardsPerDeck - (pullAmount - i)
-                
+
+                // Verify cards placed correctly
+                const allCards = deck.getRemaining();
+                assert(_.isEqual(_.takeRight(allCards, pullAmount), pulledCards));
+                _.forEach(allCards, (card) => {
+                    assert.instanceOf(card, Card);
+                });
             });
+
+            it('Will not push any undefineds onto the active cards', () => {
+                let deck = new Deck();
+                deck.shuffle();
+                const pullAmount = 10;
+                deck.pullTop(pullAmount);
+                // Do the operation now
+                deck.replaceTop();
+                const allCards = deck.getRemaining();
+                _.forEach(allCards, (card) => {
+                    assert.instanceOf(card, Card);
+                });
+            });
+            
         });
     });    
 });

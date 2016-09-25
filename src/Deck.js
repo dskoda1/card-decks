@@ -196,7 +196,7 @@ class Deck {
             }
 
             for (let i = 0; i < this.pulledSize(); ++i) {
-                arrMethod.call(this.activeCards, this.inactiveCards[0]);
+                arrMethod.call(this.activeCards, this.inactiveCards[i]);
             }            
             this.inactiveCards = [];
             
