@@ -49,6 +49,29 @@ describe('Deck', () => {
         });
     });
     
+    describe('Deck.hasBeenPulled(combo)', () => {
+       it ('Will throw Card.badCombo if argument is invalid', () => {
+          let deck = new Deck();
+          expect(() => deck.hasBeenPulled({})).to.throw(Card.BAD_COMBO);
+       });
+       
+       it ('Will have n of each card where n is numDecks, after pulling all cards', () => {
+            let oneDeck = new Deck();
+            oneDeck.pullTop(Deck.CardsPerDeck);
+            _.forEach(Card.Combinations, (combo) => {
+                expect(oneDeck.hasBeenPulled(combo)).to.equal(1);
+            });
+            
+            let fiveDeck = new Deck({
+                'numDecks': 5
+            });
+            fiveDeck.pullTop(Deck.CardsPerDeck * 5);
+            _.forEach(Card.Combinations, (combo) => {
+                expect(fiveDeck.hasBeenPulled(combo)).to.equal(5);
+            });
+        });
+    });
+    
 //////////////////////////////////////////////////////////////////////////
     describe('Deck.peekTop(n)', () => {
         it('Will return the top n cards of the deck without removing it', () => {
@@ -416,9 +439,49 @@ describe('Deck', () => {
             });
             
         });
+    });   
+//////////////////////////////////////////////////////////////////////////
+    describe('Deck.deal(players, cards)', () => {
+        it('Will default to 4 players, size/4 cards', () => {
+            let deck = new Deck();
+            let hands = deck.deal();
+            
+            expect(hands.length).to.equal(4);
+            _.forEach(hands, (hand) => {
+                expect(hand.length).to.equal(Deck.CardsPerDeck / 4);
+            });
+            
+            let fiveDeck = new Deck({
+                'numDecks': 5
+            });
+            hands = fiveDeck.deal();
+            
+            expect(hands.length).to.equal(4);
+            _.forEach(hands, (hand) => {
+                expect(hand.length).to.equal(Deck.CardsPerDeck * 5 / 4);
+            });
+        });
+        
+        it('Will accept an object with players, cards properties or default to 4, size/4', () => {
+            let deck = new Deck();
+            let args = {
+                players: 2,
+                cards: 8
+            };
+            let hands = deck.deal(args);
+            
+            expect(hands.length).to.equal(args.players);
+            _.forEach(hands, (hand) => {
+                expect(hand.length).to.equal(args.cards);
+            });
+            
+        });
+        
+        
+        it ('Will deal the top card to each player, number of cards times');
+        
     });    
 });
-
 
 
 

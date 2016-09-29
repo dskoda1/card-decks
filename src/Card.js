@@ -30,6 +30,13 @@ class Card {
         return this.rank;
     }
     
+    getCombo() {
+        return {
+            'suit': this.getSuit(),
+            'rank': this.getRank()
+        };
+    }
+    
     // STATIC CLASS MEMBERS
     static validateCombo(combo) {
         if (combo 

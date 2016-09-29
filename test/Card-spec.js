@@ -3,7 +3,7 @@
 let chai = require('chai');
 let expect = chai.expect;
 let _ = require('lodash');
-//let assert = chai.assert;
+let assert = chai.assert;
 
 let Card = require('../src').Card;
 
@@ -79,6 +79,17 @@ describe('Card', () => {
             };
             let card = new Card(obj);
             expect(card.getRank()).to.equal(obj.rank);
+        });
+    });
+    
+    describe('getCombo()', () => {
+        it('Should return the correct combo', () => {
+            let obj = {
+                'suit': Card.SUITS.HEARTS,
+                'rank': Card.RANKS.TWO
+            };
+            let card = new Card(obj);
+            assert(_.isEqual(card.getCombo(), obj));
         });
     });
 });

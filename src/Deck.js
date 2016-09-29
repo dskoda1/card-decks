@@ -91,6 +91,16 @@ class Deck {
         .length;
     }
     
+    hasBeenPulled(combo) {
+        // Will throw Card.badCombo if invalid combo
+        Card.validateCombo(combo);
+        // Return the number of occurences 
+        return _.filter(this.inactiveCards, (card) => {
+           return (card.suit == combo.suit && card.rank == combo.rank); 
+        })
+        .length;
+    }
+    
     // Return the top card without removing it.
     // Throws Deck.OUT_OF_CARDS if no more cards remain
     peekTop() {
@@ -199,11 +209,33 @@ class Deck {
                 arrMethod.call(this.activeCards, this.inactiveCards[i]);
             }            
             this.inactiveCards = [];
-            
-            
         }
         
     }
+    
+    deal(args) {
+        // Validate the args
+        args = args || {};
+        args.players = args.players || 4;
+        args.cards = args.cards || (Deck.CardsPerDeck * this.numDecks / 4);
+        
+        // Initialize the return array
+        let hands = [];
+        for (let i = 0; i < args.players; ++i) {
+            hands.push([]);
+        }
+        
+        // Iterate over number of cards each player gets
+        for (let i = 0; i < args.cards; ++i) {
+            // Iterate over each player and give them a card
+            for (let j = 0; j < args.players; ++j) {
+                hands[j].push(this.pullTop());
+            }
+        }
+        
+        return hands;
+    }   
+    
     
     // STATIC METHODS
     static get BAD_AMOUNT() {
@@ -239,6 +271,8 @@ const g_TAMPERED_WITH = {
     type: 'OUT_OF_CARDS',
     error: 'No more cards are available to pull. Replace cards to continue.'
 };
+
+
 
 const g_CardsPerDeck = 52;
 
